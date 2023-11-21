@@ -48,8 +48,8 @@ func GetTasks(c echo.Context) error {
 func AddTask(c echo.Context) error {
 	newTask := NewTask()
 	if err := c.Bind(newTask); err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	tasks = append(tasks, newTask)
-	return c.JSON(http.StatusOK, newTask)
+	return c.JSON(http.StatusCreated, newTask)
 }
