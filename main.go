@@ -1,19 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 type Task struct {
-	id string
-	name string
-}
-
-func NewTask() *Task {
-	return &Task{}
+	Id string `json:"id"`
+	Name string `json:"name"`
 }
 
 var tasks []*Task = []*Task{}
@@ -21,27 +16,24 @@ var tasks []*Task = []*Task{}
 func main() {
 	tasks = []*Task{
 		{
-			id: "1",
-			name: "Eat",
+			Id: "1",
+			Name: "Eat",
 		},
 		{
-			id: "2",
-			name: "Sleep",
+			Id: "2",
+			Name: "Sleep",
 		},
 		{
-			id: "3",
-			name: "Study",
+			Id: "3",
+			Name: "Study",
 		},
-	}
-	for _, task := range tasks {
-		fmt.Println(task.name)
 	}
 
 	e := echo.New()
-	e.GET("/", hello)
+	e.GET("/tasks", GetTasks)
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
-func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "hello")
+func GetTasks(c echo.Context) error {
+	return c.JSON(http.StatusOK, tasks)
 }
