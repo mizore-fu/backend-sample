@@ -36,6 +36,7 @@ func main() {
 	e := echo.New()
 	e.GET("/tasks", GetTasks)
 	e.POST("/tasks", AddTask)
+	e.PUT("/tasks/:id", UpdateTask)
 	e.DELETE("/tasks/:id", DeleteTask)
 	e.Logger.Fatal(e.Start(":8080"))
 }
@@ -53,6 +54,32 @@ func AddTask(c echo.Context) error {
 	}
 	tasks = append(tasks, newTask)
 	return c.JSON(http.StatusCreated, newTask)
+}
+
+//http://localhost:8080/tasks/1
+//body: {"name": "bbb"}
+func UpdateTask(c echo.Context) error {
+	id := c.Param("id")
+
+	newTask := NewTask()
+	newTask.ID = id
+	if err := c.Bind(newTask); err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	position := -1
+	for i, task := range tasks {
+		if task.ID == id {
+			position = i
+			break
+		}
+	}
+	if position == -1 {
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	tasks[position] = newTask
+	return c.NoContent(http.StatusNoContent)
 }
 
 //http://localhost:8080/tasks/1
